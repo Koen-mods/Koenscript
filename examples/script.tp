@@ -1,0 +1,15 @@
+#define position
+x = 10
+y = 10
+z = 10
+
+#print position
+print "Your position is:"
+print x
+print y
+print z
+
+#change x to user input
+input(x, "Choose a new value for x: ")
+print "You have chosen:"
+print x

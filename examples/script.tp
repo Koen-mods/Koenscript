@@ -10,6 +10,7 @@ print y
 print z
 
 #change x to user input
-input(x, "Choose a new value for x: ")
-print "You have chosen:"
+input(addition, "Change x by: ")
+print "new x:"
+add(x, x, addition)
 print x

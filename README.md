@@ -6,6 +6,7 @@ Functions:
 ```
 print <string or var>
 input(<varname>, <prompt>)
+add(<var>, <first value or var>, <second value or second var>)
 ```
 
 Examples can be found in examples/

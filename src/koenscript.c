@@ -44,6 +44,39 @@ int has_content(const char *str) {
     return 0;
 }
 
+int resolve_value(const char* token, int* out) {
+    // Check if it's a number literal
+    char* endptr;
+    long val = strtol(token, &endptr, 10);
+    if (*endptr == '\0') {  
+        // whole string was a number
+        *out = (int)val;
+        return 1;
+    }
+
+    // Otherwise, look up variable
+    Var* v = find_var(token);
+    if (v) {
+        *out = v->value;
+        return 1;
+    }
+
+    return 0; // fail (undefined var or wrong type)
+}
+
+int add(const char* a, const char* b) {
+    int val1, val2;
+    if (!resolve_value(a, &val1)) {
+        printf("Error: '%s' is not a number or variable\n", a);
+        return 0;
+    }
+    if (!resolve_value(b, &val2)) {
+        printf("Error: '%s' is not a number or variable\n", b);
+        return 0;
+    }
+    return val1 + val2;
+}
+
 // Execute one line
 void execute_line(char* line) {
     trim(line);
@@ -110,7 +143,32 @@ void execute_line(char* line) {
                     printf("Syntax error in input() arguments\n");
                 }
             } else {
-                printf("Syntax error\n");
+                if (strncmp(line, "add(", 4) == 0) {
+                    char args[256];
+                    const char *open = strchr(line, '(');
+                    const char *close = strrchr(line, ')');
+
+                    if (!open || !close || close <= open) {
+                        printf("Syntax error in add()\n");
+                        return;
+                    }
+
+                    strncpy(args, open + 1, close - open - 1);
+                    args[close - open - 1] = '\0';
+                    char result_name[64], left[64], right[64];
+                    if (sscanf(args, " %63[^,], %63[^,], %63[^,]", result_name, left, right) == 3) {
+                        Var* v = find_var(result_name);
+                        if (v) {
+                            v->value = add(left, right);
+                        } else {
+                            create_var(result_name, add(left, right));
+                        }
+                    } else {
+                        printf("Syntax error in add() arguments\n");
+                    }
+                } else {
+                    printf("Syntax error\n");
+                }
             }
         }
     }

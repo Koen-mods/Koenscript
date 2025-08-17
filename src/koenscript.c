@@ -202,6 +202,7 @@ int main(int argc, char* argv[]) {
             printf(">> ");
             if (!fgets(line, sizeof(line), stdin)) break;
             if (has_content(line) == 0 || line[0] == '#') continue;
+            if (strncmp(line, "exit", 4) == 0) break;
             execute_line(line);
         }
     }
